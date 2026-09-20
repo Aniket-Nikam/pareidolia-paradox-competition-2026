@@ -2,6 +2,10 @@
 
 Reproducible CPU classification of 256 x 256 grayscale lunar surface crops. Class **0 (Depth)** means craters, holes and depressions; class **1 (Rise)** means mounds, hills, rocks and boulders. The competition deliverable is a prediction CSV. No frontend, API or dashboard is required.
 
+**Current qualification: final selection gate NOT PASSED.** The expanded study found no defensible new winner. The previous CSV and checkpoint are preserved, not certified as robust. Read the [current reliability report](reports/reliability_report.md) and [reproduction commands](RELIABILITY.md) before using them. Its nested-ensemble OOF estimate supersedes the historical single-member estimate below. Actual hidden-test accuracy is unknown.
+
+Current nested ensemble OOF balanced accuracy: **71.49%**, with a 10,000 group-bootstrap 95% interval of **70.46%–72.52%**. Depth recall is 74.81%; Rise recall is 68.18%. Worst sun-angle-bin balanced accuracy is only **47.68%**. The interval conditions on fitted OOF predictions and does not establish a minimum future test accuracy.
+
 ## Data
 
 Use the organizer-provided files locally. Datasets are intentionally not included in this repository. Expected layout (nested original folder layouts also work):
@@ -44,7 +48,7 @@ For individual archives, pass `train_images.zip`, `eval_images.zip`, `train_meta
 .\.venv\Scripts\python.exe train.py --data-root data --artifacts artifacts --config config.yaml
 ```
 
-The full run compares five methods with five-fold grouped validation and four azimuth-sector stress tests. It saves `artifacts/pareidolia_final_model.joblib`, aggregate/per-fold metrics, OOF predictions and fingerprinted feature caches. CPU runtime is several minutes or longer depending on hardware. Use the identical command with `--resume` to reuse completed experiments. Partial folds rerun. Changed data, configuration or model source requires a fresh artifacts directory; do not relabel old caches as current.
+This historical reproduction run compares five methods with five-fold grouped validation and four azimuth-sector stress tests. It saves `artifacts/pareidolia_final_model.joblib`, aggregate/per-fold metrics, OOF predictions and fingerprinted feature caches. Its historical composite selection rule is not the new qualification gate or a reliability percentage. CPU runtime is several minutes or longer depending on hardware. Use the identical command with `--resume` to reuse completed experiments. Partial folds rerun. Changed data, configuration or model source requires a fresh artifacts directory; do not relabel old caches as current. The expanded study and current selection decision are reproduced separately using `RELIABILITY.md`.
 
 ## Inference and submission validation
 
@@ -63,7 +67,7 @@ Selected method: **reflect-rbf-balanced**. Image-only candidates standardize 444
 
 Each image is matched to its metadata and passed through `ml/preprocessing.py::normalize_solar_azimuth` with **`-sun_azimuth_angle`**. Pillow defines positive angles as counter-clockwise, so the negative value performs the required normalization. We reflect-pad each side by ceil(half the image diagonal)+4 pixels, rotate with bicubic interpolation about the same center, then center-crop to the original 256 x 256. The descriptor stage resizes to 48 x 48 with Lanczos. Padding avoids new black fill triangles but does not remove original black regions or all orientation cues. Identical deterministic preprocessing is used for training, validation and evaluation.
 
-No stochastic augmentation, flips, arbitrary extra rotations or test-time augmentation are used. No pretrained network or synthetic training data is used.
+No stochastic augmentation, flips, arbitrary extra rotations or test-time augmentation are used in the deployed model. It uses no pretrained network or synthetic data. The expanded comparison also evaluates frozen ImageNet ResNet-18 and MobileNetV3-Small feature extractors; neither was deployed. Separate requested noise/interpolation diagnostic copies never replace primary validation or test inputs.
 
 ## Validation and reproducibility
 
@@ -79,7 +83,7 @@ The final model bundles five fold members. Each member's probability is converte
 | reflect-rbf-unbalanced | 70.82% | 71.93% | 69.70% | 49.75% |
 | angle-only-diagnostic | 78.14% | 82.38% | 73.90% | 49.87% |
 
-Selected grouped OOF BA: **70.93%**. Sector-held-out mean BA: **50.57%**. Full per-fold recalls, confusion matrices, thresholds and azimuth-bin metrics are in [final results](reports/final_results.md); source/data risks are in [audit report](reports/audit_report.md).
+Historical single-held-out-member OOF BA: **70.93%**. Sector-held-out mean BA: **50.57%**. These are not the newer nested five-member ensemble estimate. The [current reliability report](reports/reliability_report.md) contains the primary estimate, 10,000 group-bootstrap interval, all candidate comparisons and failed selection gate. Earlier results remain in [historical results](reports/final_results.md); source/data risks are in [audit report](reports/audit_report.md).
 
 ## Exact model download
 
@@ -97,6 +101,6 @@ Only load a checkpoint from a trusted source after checking its hash: joblib/pic
 
 ## Limitations
 
-The source data contains pixel-identical images with different labels/metadata, and azimuth is correlated with labels while its distribution changes in evaluation. Held-out-direction performance is near chance: robust generalization has not been demonstrated. Raw-group and azimuth-block validation help measure this risk but do not eliminate unknown related scenes. Reflect padding introduces mirrored content. Calibration and threshold share an inner holdout, and refitting may shift calibration. Model selection uses the reported validation results, so the selected score is not an untouched test estimate. OOF evaluates one held-out member per row, not the entire final ensemble. Official evaluation accuracy is unknown. CPU-only resources limited the model family; no CNN performance is claimed.
+The source data contains pixel-identical images with different labels/metadata, and azimuth is correlated with labels while its distribution changes in evaluation. Held-out-direction and within-angle-bin performance are near chance: robust generalization has not been demonstrated. Raw-group and azimuth-block validation help measure this risk but do not eliminate unknown related scenes. Reflect padding introduces mirrored content. Calibration and threshold share an inner holdout, and refitting may shift calibration. Model selection uses the reported validation results, so scores are not untouched test estimates. Historical OOF evaluates one held-out member per row. The newer nested OOF evaluates five-member ensembles with smaller training partitions than deployment. Confidence intervals exclude model selection and deployment shift. Official evaluation accuracy is unknown. CPU-only comparisons used frozen CNN features, not end-to-end fine-tuning.
 
 Competition deadline supplied by the organizer: **21 September 2026, 11:59 PM IST**. Publishing code or generating predictions does not submit the entry.

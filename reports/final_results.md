@@ -1,5 +1,7 @@
 # Verified final results
 
+Historical v2 results. The [current reliability report](reliability_report.md) supersedes these single-member OOF estimates with nested ensemble validation and an explicit **NOT PASSED** final selection gate. The preserved CSV is structurally valid but is not certified as scientifically reliable.
+
 Measured on the supplied official data. Balanced accuracy is (depth recall + rise recall) / 2. These are validation scores, not leaderboard scores.
 
 ## Comparison

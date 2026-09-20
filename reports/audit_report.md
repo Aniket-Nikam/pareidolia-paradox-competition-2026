@@ -1,5 +1,7 @@
 # Audit of the existing solution
 
+This is the historical source/data audit. See the [expanded reliability study](reliability_report.md) for subsequent frozen-CNN comparisons, nested ensemble OOF, uncertainty, calibration and the current failed qualification gate.
+
 ## Scope and completion before this audit
 
 The organizer's problem is a binary image-classification task, not a web application. No frontend or API is required. The earlier workspace already contained a trained HOG/logistic-regression model and a structurally valid 2,000-row submission. Its inference was rerun during this audit and reproduced the original CSV byte for byte (335 depth, 1,665 rise). The original files were preserved. Public repository/weights and this stricter audit were not part of that earlier completion.
