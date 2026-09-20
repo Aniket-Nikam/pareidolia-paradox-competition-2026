@@ -1,0 +1,104 @@
+{
+  "fingerprint": "ef56180f7bedc1ebb902ba02043bc0b753705b20437ce57aae5c9dde6faccfd3",
+  "decoded_count": 9854,
+  "train_count": 7854,
+  "test_count": 2000,
+  "class_counts": {
+    "0": 2854,
+    "1": 5000
+  },
+  "modes": {
+    "RGB": 9854
+  },
+  "dtype": "uint8",
+  "dimensions": [
+    256,
+    256
+  ],
+  "global_intensity_range": [
+    0,
+    255
+  ],
+  "equal_rgb_count": 9854,
+  "constant_images": [],
+  "exact_duplicate_extra_images": 2385,
+  "near_duplicate_connections": 2,
+  "conflicting_train_groups": 1458,
+  "train_test_shared_groups": 829,
+  "azimuth_bins": [
+    {
+      "start": 0,
+      "end": 45,
+      "train_n": 693,
+      "test_n": 127,
+      "depth": 82,
+      "rise": 611,
+      "rise_fraction": 0.8816738816738817
+    },
+    {
+      "start": 45,
+      "end": 90,
+      "train_n": 693,
+      "test_n": 126,
+      "depth": 83,
+      "rise": 610,
+      "rise_fraction": 0.8802308802308803
+    },
+    {
+      "start": 90,
+      "end": 135,
+      "train_n": 722,
+      "test_n": 605,
+      "depth": 93,
+      "rise": 629,
+      "rise_fraction": 0.871191135734072
+    },
+    {
+      "start": 135,
+      "end": 180,
+      "train_n": 706,
+      "test_n": 625,
+      "depth": 75,
+      "rise": 631,
+      "rise_fraction": 0.8937677053824362
+    },
+    {
+      "start": 180,
+      "end": 225,
+      "train_n": 712,
+      "test_n": 125,
+      "depth": 78,
+      "rise": 634,
+      "rise_fraction": 0.8904494382022472
+    },
+    {
+      "start": 225,
+      "end": 270,
+      "train_n": 685,
+      "test_n": 127,
+      "depth": 89,
+      "rise": 596,
+      "rise_fraction": 0.8700729927007299
+    },
+    {
+      "start": 270,
+      "end": 315,
+      "train_n": 1818,
+      "test_n": 134,
+      "depth": 1186,
+      "rise": 632,
+      "rise_fraction": 0.34763476347634764
+    },
+    {
+      "start": 315,
+      "end": 360,
+      "train_n": 1825,
+      "test_n": 131,
+      "depth": 1168,
+      "rise": 657,
+      "rise_fraction": 0.36
+    }
+  ],
+  "azimuth_ks": 0.38418054494525083,
+  "duplicate_method": "Exact decoded-pixel SHA256; raw and normalized 63-bit DCT pHash Hamming<=4 plus 32x32 RMSE<=0.04, connected groups. Conservative heuristic, not scene identity proof."
+}

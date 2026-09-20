@@ -1,0 +1,11 @@
+{
+  "seed": 2026,
+  "folds": 5,
+  "image_size": 48,
+  "border_mode": "reflect",
+  "feature_version": "reflect-hog-pixels-v2",
+  "svm_c": 3.0,
+  "svm_gamma": "scale",
+  "threads": 6,
+  "threshold_grid": [0.2, 0.8, 121]
+}
