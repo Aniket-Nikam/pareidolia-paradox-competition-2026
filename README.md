@@ -32,9 +32,18 @@ data/
 
 Training columns: `image_id,sun_azimuth_angle,label`. Evaluation columns: `image_id,sun_azimuth_angle`. The evaluation archive may be named `eval_images.zip` or `test_images.zip`. Every basename and row order is validated. Point `--data-root` to a tree containing exactly one of each metadata CSV and one copy of every PNG.
 
+## Hardware requirements
+
+- CPU: Modern 4-core x86-64 processor or better
+- RAM: Minimum 8 GB; 16 GB recommended
+- Storage: At least 5 GB free for the dataset, extracted images, model checkpoint and generated artifacts
+- GPU: Not required; the selected final pipeline runs on CPU
+- Operating system: Windows 10/11, Linux or macOS
+- Python: Python 3.13
+
 ## Installation
 
-Tested with Python 3.13 on Windows, CPU only. Run from the repository root:
+Run from the repository root:
 
 ```powershell
 py -3.13 -m venv .venv
@@ -45,6 +54,8 @@ py -3.13 -m venv .venv
 
 On Linux/macOS, create the environment with `python3.13 -m venv .venv` and replace `.\.venv\Scripts\python.exe` in the following commands with `.venv/bin/python`.
 
+## Data preparation
+
 If using the supplied outer ZIP bundles, extract only the relevant data into a new directory:
 
 ```powershell
@@ -53,7 +64,7 @@ If using the supplied outer ZIP bundles, extract only the relevant data into a n
 
 For individual archives, pass `train_images.zip`, `eval_images.zip`, `train_metadata.csv`, and `test_metadata.csv` together after `--sources`. Skip extraction when an existing data tree is already available; use its path instead of `data` below. The extractor rejects overwrites, unsafe archive members and unexpected sizes.
 
-## Validate and train
+## Training
 
 ```powershell
 .\.venv\Scripts\python.exe data_checks.py --data-root data --artifacts artifacts
@@ -62,12 +73,19 @@ For individual archives, pass `train_images.zip`, `eval_images.zip`, `train_meta
 
 Root-level `train.py` is the selected fallback training workflow. It compares five classical candidates with five-fold grouped validation and four azimuth-sector stress tests, then writes the selected `reflect-rbf-balanced` ensemble to `artifacts/pareidolia_final_model.joblib`. It also saves aggregate/per-fold metrics, OOF predictions and fingerprinted feature caches. CPU runtime is several minutes or longer depending on hardware. Use the identical command with `--resume` to reuse completed experiments. Partial folds rerun. Changed data, configuration or model source requires a fresh artifacts directory; do not relabel old caches as current. The expanded audit is reproduced separately using `RELIABILITY.md`; GPU code is not invoked by root `train.py`.
 
-## Inference and submission validation
+## One-command inference
 
 Place the exact fallback checkpoint at `artifacts/pareidolia_final_model.joblib`, then run:
 
 ```powershell
 .\.venv\Scripts\python.exe inference.py --data-root data --checkpoint artifacts/pareidolia_final_model.joblib --artifacts artifacts --output output/submission.csv
+```
+
+This command applies the checkpoint's stored preprocessing, feature configuration, member calibrators, member thresholds and final cutoff, then writes `output/submission.csv` in evaluation-metadata order.
+
+## Submission validation
+
+```powershell
 .\.venv\Scripts\python.exe validate_submission.py --submission output/submission.csv --metadata data/test_metadata.csv --report artifacts/submission_validation.json
 ```
 
@@ -99,7 +117,7 @@ Historical single-held-out-member OOF BA: **70.93%**. Sector-held-out mean BA: *
 
 ## Exact model download
 
-Public weights link pending. The exact fallback checkpoint is ready locally; upload/share it before completing the competition form.
+The checkpoint is distributed separately through the public model-download URL submitted in the competition form. No model binary is committed to this source repository.
 
 Expected filename: `pareidolia_final_model.joblib`. This is the selected sklearn ensemble, not a PyTorch `.pt` file. All five required members, calibrators, thresholds, feature configuration and final cutoff are bundled in one file.
 
