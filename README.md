@@ -2,9 +2,11 @@
 
 Reproducible CPU classification of 256 x 256 grayscale lunar surface crops. Class **0 (Depth)** means craters, holes and depressions; class **1 (Rise)** means mounds, hills, rocks and boulders. The competition deliverable is a prediction CSV. No frontend, API or dashboard is required.
 
-**Current qualification: final selection gate NOT PASSED.** The expanded study found no defensible new winner. The previous CSV and checkpoint are preserved, not certified as robust. Read the [current reliability report](reports/reliability_report.md) and [reproduction commands](RELIABILITY.md) before using them. Its nested-ensemble OOF estimate supersedes the historical single-member estimate below. Actual hidden-test accuracy is unknown.
+**Current qualification: final selection gate NOT PASSED.** End-to-end CUDA fine-tuning also failed to establish robust morphology recognition, so the previous CSV remains the exact recommendation. Read the [GPU report](reports/gpu_reliability_report.md), [earlier reliability report](reports/reliability_report.md), and [reproduction commands](RELIABILITY.md). Actual hidden-test accuracy is unknown.
 
 Current nested ensemble OOF balanced accuracy: **71.49%**, with a 10,000 group-bootstrap 95% interval of **70.46%–72.52%**. Depth recall is 74.81%; Rise recall is 68.18%. Worst sun-angle-bin balanced accuracy is only **47.68%**. The interval conditions on fitted OOF predictions and does not establish a minimum future test accuracy.
+
+The time-bounded GPU study screened EfficientNet-B0 and ResNet-18, then trained the selected EfficientNet-B0 `circle180` policy for three grouped folds. Its pooled OOF balanced accuracy was **68.00%**, macro within-azimuth-bin balanced accuracy **50.85%**, and worst bin **48.49%**. The existing submission was therefore retained unchanged.
 
 ## Data
 

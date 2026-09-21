@@ -28,3 +28,7 @@ The time-bounded workflow screens EfficientNet-B0 with all three boundary polici
 Outputs include fold checkpoints, fold histories, genuine OOF predictions, 10,000 group-bootstrap samples, evaluation probabilities, `candidate_submission.csv`, `updated_reliability_report.md`, and `best_verified/submission.csv`. The latter is copied from the candidate only if every prespecified morphology gate passes; otherwise it is the unchanged fallback.
 
 The Colab notebook is `notebooks/pareidolia_gpu_finetuning.ipynb`. Colab runtimes are not guaranteed. Confirm a GPU is assigned before training. The notebook downloads the public source repository and organizer data, or allows manual uploads when Drive download is unavailable. It does not publish datasets or weights.
+
+## Verified local result
+
+The completed RTX 3050 run selected EfficientNet-B0 with `circle180`, then trained three grouped folds. Pooled OOF balanced accuracy was 68.00%, macro within-azimuth-bin balanced accuracy was 50.85%, and the worst bin was 48.49%. The model failed the promotion gate, so the validated fallback CSV remains the exact recommendation. See `reports/gpu_reliability_report.md` for screening results, comparisons, limitations, and the decision.
