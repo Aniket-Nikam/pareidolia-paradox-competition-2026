@@ -43,8 +43,10 @@ def main():
 
 **{recommendation['status']}**. {recommendation['reason']}
 
-Exact recommended CSV: `{recommendation['recommended_output']}`  
-SHA-256: `{recommendation['recommended_sha256']}`  
+Exact recommended CSV: `{recommendation['recommended_output']}`
+
+SHA-256: `{recommendation['recommended_sha256']}`
+
 Candidate versus fallback label changes: {recommendation['candidate_vs_fallback_label_changes']}.
 
 ## Full grouped OOF result
