@@ -1,4 +1,6 @@
-# End-to-end GPU morphology training report
+# GPU morphology experiment — evaluated but not selected
+
+**Evaluated but not selected.** This report documents a rejected experiment. Its checkpoints are not the final competition weights and its candidate CSV must not replace the selected fallback submission.
 
 ## Recommendation
 

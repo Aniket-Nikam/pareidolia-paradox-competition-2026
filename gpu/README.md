@@ -1,4 +1,6 @@
-# GPU morphology workflow
+# GPU morphology workflow — evaluated but not selected
+
+**Evaluated but not selected.** These checkpoints and predictions do not reproduce the final competition submission. The selected fallback is the root-level classical `reflect-rbf-balanced` pipeline documented in `README.md` and `fallback_manifest.json`.
 
 This package fine-tunes complete ImageNet-initialized networks on competition labels. It is intentionally separate from the historical classical `train.py` and `inference.py` so the validated fallback remains reproducible.
 

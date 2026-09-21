@@ -1,0 +1,59 @@
+{
+  "status": "FINAL SELECTED FALLBACK",
+  "model_name": "reflect-rbf-balanced",
+  "checkpoint_filename": "pareidolia_final_model.joblib",
+  "checkpoint_sha256": "ce1bbc1fe409513104452082f305a0c0a62316e054a6f2b0c1895430829150cf",
+  "expected_submission_filename": "submission.csv",
+  "expected_submission_sha256": "d613c160a15a23089d800ea3b056afedc9167da696689c6a4daec8ebae81cc72",
+  "dataset_fingerprint": "ef56180f7bedc1ebb902ba02043bc0b753705b20437ce57aae5c9dde6faccfd3",
+  "preprocessing": {
+    "grayscale": true,
+    "rotation_degrees": "-sun_azimuth_angle",
+    "rotation_resampling": "bicubic",
+    "border_mode": "reflect",
+    "reflect_padding_pixels_each_side": "ceil(hypot(width,height)/2)+4",
+    "post_rotation_crop": "center crop to original 256x256 support",
+    "feature_image_size": 48,
+    "feature_resize_resampling": "Lanczos"
+  },
+  "features": {
+    "version": "reflect-hog-pixels-v2",
+    "dimension": 444,
+    "direct_angle_features": false,
+    "standardized_intensity_grid": 144,
+    "hog_dimension": 288,
+    "hog_cell_size": 8,
+    "hog_orientation_bins": 8,
+    "quantiles": 5,
+    "global_statistics": 7
+  },
+  "classifier": {
+    "members": 5,
+    "pipeline": ["StandardScaler", "SVC"],
+    "kernel": "rbf",
+    "class_weight": "balanced",
+    "C": 3.0,
+    "gamma": "scale",
+    "member_probability_calibration": "LogisticRegression on grouped inner holdout decision scores",
+    "member_thresholds": [0.6350000000000001, 0.6800000000000002, 0.6500000000000001, 0.6600000000000001, 0.6600000000000001],
+    "ensemble_rule": "Average threshold-adjusted member decision scores",
+    "final_cutoff": 0.5
+  },
+  "validation": {
+    "grouped_oof_balanced_accuracy": 0.7092612473721093,
+    "nested_ensemble_oof_balanced_accuracy": 0.7149,
+    "nested_group_bootstrap_95_percent_interval": [0.7046, 0.7252],
+    "warning": "Within-azimuth-bin performance is approximately chance; hidden-test accuracy is unknown."
+  },
+  "metadata_sha256": {
+    "train_metadata.csv": "0b5aeade26080948c5bf70ab86119cd1fcc8b5fcdc7c808dfeff5fef8cf6a965",
+    "test_metadata.csv": "015f9c4ad930b2a8e211c8d41ddccbaeca7978373f9feeaa394d4cb59159f3b8"
+  },
+  "clean_inference_reproduction": {
+    "same_2000_ids": true,
+    "same_labels": true,
+    "same_order": true,
+    "byte_for_byte_identical": true,
+    "regenerated_submission_sha256": "d613c160a15a23089d800ea3b056afedc9167da696689c6a4daec8ebae81cc72"
+  }
+}

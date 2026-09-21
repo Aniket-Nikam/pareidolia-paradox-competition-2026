@@ -2,11 +2,21 @@
 
 Reproducible CPU classification of 256 x 256 grayscale lunar surface crops. Class **0 (Depth)** means craters, holes and depressions; class **1 (Rise)** means mounds, hills, rocks and boulders. The competition deliverable is a prediction CSV. No frontend, API or dashboard is required.
 
-**Current qualification: final selection gate NOT PASSED.** End-to-end CUDA fine-tuning also failed to establish robust morphology recognition, so the previous CSV remains the exact recommendation. Read the [GPU report](reports/gpu_reliability_report.md), [earlier reliability report](reports/reliability_report.md), and [reproduction commands](RELIABILITY.md). Actual hidden-test accuracy is unknown.
+## Final selected fallback
+
+The final selected pipeline is **`reflect-rbf-balanced`**, stored in `pareidolia_final_model.joblib`. It is a five-member, class-balanced RBF-SVM ensemble using image-only HOG, standardized intensity, quantile and global-statistic features. The rejected GPU candidate is not the final model. Its code remains isolated under `gpu/` and is labelled **Evaluated but not selected**.
+
+Checkpoint SHA-256: `ce1bbc1fe409513104452082f305a0c0a62316e054a6f2b0c1895430829150cf`
+
+Selected submission SHA-256: `d613c160a15a23089d800ea3b056afedc9167da696689c6a4daec8ebae81cc72`
+
+A clean-process rerun from this checkpoint reproduced all 2,000 IDs, labels and row order byte-for-byte. The exact configuration and per-member thresholds are recorded in [`fallback_manifest.json`](fallback_manifest.json).
+
+The grouped selection experiment estimated **70.93% balanced accuracy** for this pipeline. A later nested five-member ensemble audit estimated **71.49%** with a conditional 10,000-group-bootstrap interval of **70.46%–72.52%**. Within-azimuth-bin performance remained approximately chance, so these are validation estimates rather than guarantees. Actual hidden-test accuracy is unknown.
 
 Current nested ensemble OOF balanced accuracy: **71.49%**, with a 10,000 group-bootstrap 95% interval of **70.46%–72.52%**. Depth recall is 74.81%; Rise recall is 68.18%. Worst sun-angle-bin balanced accuracy is only **47.68%**. The interval conditions on fitted OOF predictions and does not establish a minimum future test accuracy.
 
-The time-bounded GPU study screened EfficientNet-B0 and ResNet-18, then trained the selected EfficientNet-B0 `circle180` policy for three grouped folds. Its pooled OOF balanced accuracy was **68.00%**, macro within-azimuth-bin balanced accuracy **50.85%**, and worst bin **48.49%**. The existing submission was therefore retained unchanged.
+The time-bounded GPU study screened EfficientNet-B0 and ResNet-18. It was evaluated but not selected; its report is preserved separately in [`reports/gpu_reliability_report.md`](reports/gpu_reliability_report.md).
 
 ## Data
 
@@ -50,11 +60,11 @@ For individual archives, pass `train_images.zip`, `eval_images.zip`, `train_meta
 .\.venv\Scripts\python.exe train.py --data-root data --artifacts artifacts --config config.yaml
 ```
 
-This historical reproduction run compares five methods with five-fold grouped validation and four azimuth-sector stress tests. It saves `artifacts/pareidolia_final_model.joblib`, aggregate/per-fold metrics, OOF predictions and fingerprinted feature caches. Its historical composite selection rule is not the new qualification gate or a reliability percentage. CPU runtime is several minutes or longer depending on hardware. Use the identical command with `--resume` to reuse completed experiments. Partial folds rerun. Changed data, configuration or model source requires a fresh artifacts directory; do not relabel old caches as current. The expanded study and current selection decision are reproduced separately using `RELIABILITY.md`.
+Root-level `train.py` is the selected fallback training workflow. It compares five classical candidates with five-fold grouped validation and four azimuth-sector stress tests, then writes the selected `reflect-rbf-balanced` ensemble to `artifacts/pareidolia_final_model.joblib`. It also saves aggregate/per-fold metrics, OOF predictions and fingerprinted feature caches. CPU runtime is several minutes or longer depending on hardware. Use the identical command with `--resume` to reuse completed experiments. Partial folds rerun. Changed data, configuration or model source requires a fresh artifacts directory; do not relabel old caches as current. The expanded audit is reproduced separately using `RELIABILITY.md`; GPU code is not invoked by root `train.py`.
 
 ## Inference and submission validation
 
-Place the downloaded checkpoint at `artifacts/pareidolia_final_model.joblib`, or use the locally trained one:
+Place the exact fallback checkpoint at `artifacts/pareidolia_final_model.joblib`, then run:
 
 ```powershell
 .\.venv\Scripts\python.exe inference.py --data-root data --checkpoint artifacts/pareidolia_final_model.joblib --artifacts artifacts --output output/submission.csv
@@ -65,11 +75,11 @@ If metadata remains nested, give the validator its actual path. Inference curren
 
 ## Model and physics
 
-Selected method: **reflect-rbf-balanced**. Image-only candidates standardize 444 descriptors: 144 downsampled intensity values, 288 unsigned HOG values, five quantiles and seven global statistics. The existing metadata comparator adds four angle features (448 total), while the angle-only diagnostic uses just those four features. Linear baselines use balanced logistic regression; nonlinear candidates use an RBF SVM with C=3 and gamma=`scale`, comparing balanced versus unweighted class losses. Direct sine/cosine angle features are used only by comparison/diagnostic models, not the final image-only model.
+Selected method: **reflect-rbf-balanced**. It standardizes 444 image descriptors: 144 downsampled intensity values, 288 unsigned HOG values, five quantiles and seven global statistics. Each of five members is a `StandardScaler` followed by a class-balanced RBF SVM with `C=3` and `gamma=scale`. Direct sine/cosine angle features are not used by the selected model.
 
 Each image is matched to its metadata and passed through `ml/preprocessing.py::normalize_solar_azimuth` with **`-sun_azimuth_angle`**. Pillow defines positive angles as counter-clockwise, so the negative value performs the required normalization. We reflect-pad each side by ceil(half the image diagonal)+4 pixels, rotate with bicubic interpolation about the same center, then center-crop to the original 256 x 256. The descriptor stage resizes to 48 x 48 with Lanczos. Padding avoids new black fill triangles but does not remove original black regions or all orientation cues. Identical deterministic preprocessing is used for training, validation and evaluation.
 
-No stochastic augmentation, flips, arbitrary extra rotations or test-time augmentation are used in the deployed model. It uses no pretrained network or synthetic data. The expanded comparison also evaluates frozen ImageNet ResNet-18 and MobileNetV3-Small feature extractors; neither was deployed. Separate requested noise/interpolation diagnostic copies never replace primary validation or test inputs.
+No stochastic augmentation, flips, arbitrary extra rotations or test-time augmentation are used in the selected model. It uses no pretrained network or synthetic data. Separate frozen-network and end-to-end GPU experiments were evaluated but not selected.
 
 ## Validation and reproducibility
 
@@ -89,9 +99,9 @@ Historical single-held-out-member OOF BA: **70.93%**. Sector-held-out mean BA: *
 
 ## Exact model download
 
-Public weights link pending. The exact checkpoint is ready locally; upload/share it before completing the competition form.
+Public weights link pending. The exact fallback checkpoint is ready locally; upload/share it before completing the competition form.
 
-Filename: `pareidolia_final_model.joblib`. This is a sklearn ensemble, not a PyTorch `.pth` file. All five required members are bundled in one file.
+Expected filename: `pareidolia_final_model.joblib`. This is the selected sklearn ensemble, not a PyTorch `.pt` file. All five required members, calibrators, thresholds, feature configuration and final cutoff are bundled in one file.
 
 SHA-256: `ce1bbc1fe409513104452082f305a0c0a62316e054a6f2b0c1895430829150cf`
 
